@@ -64,16 +64,10 @@ mongo.connect((err, db) => {
         }
         else {
           res.json({
-            "_id": "62fe3f60725e46fae8cc8bdc",
-            "live": false,
-            "blue_check": false,
             "name": "Fail Data",
             "username": "Fail Data",
             "count_followers": "0M",
             "count_likes": "0M",
-            "bio": "Fail Data",
-            "following": false,
-            "image": "https://i.ibb.co/J2pck6h/1.jpg"
           })
         }
       });
