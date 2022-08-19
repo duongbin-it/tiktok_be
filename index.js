@@ -69,7 +69,6 @@ mongo.connect((err, db) => {
             "blue_check": false,
             "name": "Fail Data",
             "username": "Fail Data",
-            "link": "/",
             "count_followers": "0M",
             "count_likes": "0M",
             "bio": "Fail Data",
