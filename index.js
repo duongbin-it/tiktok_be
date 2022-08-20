@@ -55,24 +55,6 @@ mongo.connect((err, db) => {
 
   app.post("api/post_videos", (req, res) => {
     dbo
-      .collection('videos')
-      .find(req.body.username && { username: req.body.username })
-      .toArray((err, obj) => {
-        if (err) throw err;
-        if (obj.length != 0) {
-          res.json(obj);
-        }
-      })
-  })
-
-  app.get("/api/import", (req, res) => {
-    dbo
-      .collection("videos")
-      .insertOne({ smcjlscnl: "sacihqddsvwsic", })
-  })
-
-  app.post("/api/users", (req, res) => {
-    dbo
       .collection("users")
       .find(req.body.username && { username: req.body.username })
       .toArray((err, obj) => {
@@ -94,21 +76,18 @@ mongo.connect((err, db) => {
               name_music: req.body.name_music,
               heart_check: req.body.heart_check,
             })
+        }
+      })
+  })
 
-          res.json({
-            ...obj[0],
-            title: req.body.title,
-            heart: req.body.heart,
-            share: req.body.share,
-            image: req.body.image,
-            comment: req.body.comment,
-            username: req.body.username,
-            name_tag: req.body.name_tag,
-            link_music: req.body.link_music,
-            link_video: req.body.link_video,
-            name_music: req.body.name_music,
-            heart_check: req.body.heart_check,
-          });
+  app.post("/api/users", (req, res) => {
+    dbo
+      .collection("users")
+      .find(req.body.username && { username: req.body.username })
+      .toArray((err, obj) => {
+        if (err) throw err;
+        if (obj.length != 0) {
+          res.json(obj);
         }
         else {
           res.json({
