@@ -19,7 +19,7 @@ mongo.connect((err, db) => {
 
   app.get("/api/newfeed", (req, res) => {
     dbo
-      .collection("courses")
+      .collection("videos")
       .find()
       .toArray((err, obj) => {
         if (err) throw err;
@@ -53,6 +53,24 @@ mongo.connect((err, db) => {
       });
   });
 
+  app.post("api/post_videos", (req, res) => {
+    dbo
+      .collection('videos')
+      .find(req.body.username && { username: req.body.username })
+      .toArray((err, obj) => {
+        if (err) throw err;
+        if (obj.length != 0) {
+          res.json(obj);
+        }
+      })
+  })
+
+  app.get("/api/import", (req, res) => {
+    dbo
+      .collection("videos")
+      .insertOne({ smcjlscnl: "sacihqddsvwsic", })
+  })
+
   app.post("/api/users", (req, res) => {
     dbo
       .collection("users")
@@ -60,29 +78,64 @@ mongo.connect((err, db) => {
       .toArray((err, obj) => {
         if (err) throw err;
         if (obj.length != 0) {
-          res.json(obj);
+          dbo
+            .collection("videos")
+            .insertOne({
+              ...obj[0],
+              title: req.body.title,
+              heart: req.body.heart,
+              share: req.body.share,
+              image: req.body.image,
+              comment: req.body.comment,
+              username: req.body.username,
+              name_tag: req.body.name_tag,
+              link_music: req.body.link_music,
+              link_video: req.body.link_video,
+              name_music: req.body.name_music,
+              heart_check: req.body.heart_check,
+            })
+
+          res.json({
+            ...obj[0],
+            title: req.body.title,
+            heart: req.body.heart,
+            share: req.body.share,
+            image: req.body.image,
+            comment: req.body.comment,
+            username: req.body.username,
+            name_tag: req.body.name_tag,
+            link_music: req.body.link_music,
+            link_video: req.body.link_video,
+            name_music: req.body.name_music,
+            heart_check: req.body.heart_check,
+          });
         }
         else {
           res.json({
-            "name": "Fail Data",
-            "username": "Fail Data",
-            "count_followers": "0M",
-            "count_likes": "0M",
+            live: false,
+            blue_check: false,
+            name: "Fail Data",
+            username: "Fail Data",
+            count_followers: "0M",
+            count_likes: "0M",
+            bio: "Fail Data",
+            following: false,
+            avatar: "https://i.ibb.co/J2pck6h/1.jpg"
           })
         }
-      });
+      })
   });
 
   app.post("/api/following", (req, res) => {
     console.log(req.body.username, req.body.value);
     newValue = { $set: { following: req.body.value } };
     dbo.collection("users").updateOne({ username: req.body.username }, newValue);
-    dbo.collection("courses").updateOne({ username: req.body.username }, newValue);
+    dbo.collection("videos").updateOne({ username: req.body.username }, newValue);
   });
 
   app.post("/api/hearted", (req, res) => {
     newValue = { $set: { heart_check: req.body.value } };
-    dbo.collection("courses").updateOne({ username: req.body.username }, newValue);
+    dbo.collection("videos").updateOne({ username: req.body.username }, newValue);
   });
 });
 
