@@ -53,7 +53,7 @@ mongo.connect((err, db) => {
       });
   });
 
-  app.post("api/post_videos", (req, res) => {
+  app.post("/api/post_videos", (req, res) => {
     dbo
       .collection("users")
       .find(req.body.username && { username: req.body.username })
@@ -80,7 +80,7 @@ mongo.connect((err, db) => {
       })
   })
 
-  app.post("api/post_users", (req, res) => {
+  app.post("/api/post_users", (req, res) => {
     dbo
       .collection("users")
       .insertOne({
