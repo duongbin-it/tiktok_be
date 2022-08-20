@@ -80,6 +80,22 @@ mongo.connect((err, db) => {
       })
   })
 
+  app.post("api/post_users", (req, res) => {
+    dbo
+      .collection("users")
+      .insertOne({
+        live: req.body.live,
+        blue_check: req.body.blue_check,
+        name: req.body.name,
+        username: req.body.username,
+        count_followers: req.body.count_followers,
+        count_likes: req.body.count_likes,
+        bio: req.body.bio,
+        following: req.body.following,
+        avatar: req.body.avatar
+      })
+  })
+
   app.post("/api/users", (req, res) => {
     dbo
       .collection("users")
