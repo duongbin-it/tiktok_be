@@ -25,7 +25,19 @@ mongo.connect((err, db) => {
           dbo.collection("users").find({ username: item.username }).toArray((err, obj) => {
             if (err) throw err;
             if (obj.length != 0) {
-              dbo.collection("videos").updateOne({ username: item.username }, { $set: { live: obj[0].live } });
+              dbo.collection("videos").updateOne({ username: item.username }, {
+                $set: {
+                  live: obj[0].live,
+                  blue_check: obj[0].blue_check,
+                  name: obj[0].name,
+                  username: obj[0].username,
+                  count_followers: obj[0].count_followers,
+                  count_likes: obj[0].count_likes,
+                  bio: obj[0].bio,
+                  following: obj[0].following,
+                  avatar: obj[0].avatar
+                }
+              });
             }
           });
         })
