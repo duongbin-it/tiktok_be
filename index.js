@@ -29,7 +29,12 @@ mongo.connect((err, db) => {
             }
           });
         })
-        res.json(obj);
+        dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray((err, obj) => {
+          if (err) throw err;
+          if (obj.length != 0) {
+            res.json(obj);
+          }
+        })
       }
     });
   });
