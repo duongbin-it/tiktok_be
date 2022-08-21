@@ -53,7 +53,7 @@ mongo.connect((err, db) => {
       });
   });
 
-  app.post("/api/post_videos", (req, res) => {
+  app.post("api/post_videos", (req, res) => {
     dbo
       .collection("users")
       .find(req.body.username && { username: req.body.username })
@@ -80,7 +80,7 @@ mongo.connect((err, db) => {
       })
   })
 
-  app.post("/api/post_users", (req, res) => {
+  app.post("api/post_users", (req, res) => {
     dbo
       .collection("users")
       .insertOne({
@@ -107,15 +107,10 @@ mongo.connect((err, db) => {
         }
         else {
           res.json({
-            live: false,
-            blue_check: false,
-            name: "Fail Data",
-            username: "Fail Data",
-            count_followers: "0M",
-            count_likes: "0M",
-            bio: "Fail Data",
-            following: false,
-            avatar: "https://i.ibb.co/J2pck6h/1.jpg"
+            "name": "Fail Data",
+            "username": "Fail Data",
+            "count_followers": "0000000",
+            "count_likes": "0000000",
           })
         }
       })
