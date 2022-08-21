@@ -69,14 +69,12 @@ mongo.connect((err, db) => {
               share: req.body.share,
               image: req.body.image,
               comment: req.body.comment,
-              username: req.body.username,
               name_tag: req.body.name_tag,
               link_music: req.body.link_music,
               link_video: req.body.link_video,
               name_music: req.body.name_music,
               heart_check: req.body.heart_check,
             })
-         res.json("post success!");
         }
       })
   })
@@ -95,7 +93,6 @@ mongo.connect((err, db) => {
         following: req.body.following,
         avatar: req.body.avatar
       })
-           res.json("post success!");
   })
 
   app.post("/api/users", (req, res) => {
