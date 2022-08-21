@@ -75,6 +75,7 @@ mongo.connect((err, db) => {
               name_music: req.body.name_music,
               heart_check: req.body.heart_check,
             })
+          res.json('post success!');
         }
       })
   })
@@ -93,6 +94,7 @@ mongo.connect((err, db) => {
         following: req.body.following,
         avatar: req.body.avatar
       })
+     res.json('post success!');
   })
 
   app.post("/api/users", (req, res) => {
