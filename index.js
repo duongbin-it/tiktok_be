@@ -18,30 +18,20 @@ mongo.connect((err, db) => {
 
 
   app.get("/api/newfeed", (req, res) => {
-    dbo
-      .collection("videos")
-      .aggregate([{ $sample: { size: 10 } }])
-      .toArray((err, obj) => {
-        if (err) throw err;
-        if (obj.length != 0) {
-          obj.map((item) => {
-            dbo.collection("users")
-              .find({ username: item.username })
-              .toArray((err, obj) => {
-                if (err) throw err;
-                if (obj.length != 0) {
-                  dbo.collection("videos").updateOne({ username: item.username },
-                    {
-                      $set: {
-                        live: obj[0].live,
-                      }
-                    });
-                }
-              });
-          })
-          res.json(obj);
-        }
-      });
+    dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray((err, objs) => {
+      if (err) throw err;
+      if (objs.length != 0) {
+        objs.map((item) => {
+          dbo.collection("users").find({ username: item.username }).toArray((err, obj) => {
+            if (err) throw err;
+            if (obj.length != 0) {
+              dbo.collection("videos").updateOne({ username: item.username }, { $set: { live: obj[0].live } });
+            }
+          });
+        })
+        res.json(objs);
+      }
+    });
   });
 
   app.get("/api/discover", (req, res) => {
