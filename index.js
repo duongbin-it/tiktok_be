@@ -7,8 +7,8 @@ const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-// app.listen(process.env.PORT, () => { });
-app.listen(3001, () => { });
+app.listen(process.env.PORT, () => { });
+// app.listen(3001, () => { });
 
 
 const mongo = new MongoClient("mongodb+srv://duongbinhnh:tungduonghj@cluster0.ubdfqnj.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true });
