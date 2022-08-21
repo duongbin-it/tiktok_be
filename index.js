@@ -18,10 +18,10 @@ mongo.connect((err, db) => {
 
 
   app.get("/api/newfeed", (req, res) => {
-    dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray((err, objs) => {
+    dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray((err, obj) => {
       if (err) throw err;
-      if (objs.length != 0) {
-        objs.map((item) => {
+      if (obj.length != 0) {
+        obj.map((item) => {
           dbo.collection("users").find({ username: item.username }).toArray((err, obj) => {
             if (err) throw err;
             if (obj.length != 0) {
@@ -29,7 +29,7 @@ mongo.connect((err, db) => {
             }
           });
         })
-        res.json(objs);
+        res.json(obj);
       }
     });
   });
