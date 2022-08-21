@@ -83,6 +83,7 @@ mongo.connect((err, db) => {
   app.post("/api/post_users", (req, res) => {
     dbo
       .collection("users")
+      .deleteOne({ username: req.body.username })
       .insertOne({
         live: req.body.live,
         blue_check: req.body.blue_check,
@@ -94,7 +95,7 @@ mongo.connect((err, db) => {
         following: req.body.following,
         avatar: req.body.avatar
       })
-     res.json('post success!');
+    res.json('post success!');
   })
 
   app.post("/api/users", (req, res) => {
