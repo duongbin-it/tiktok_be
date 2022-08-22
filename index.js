@@ -7,8 +7,8 @@ const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.listen(process.env.PORT, () => { });
-// app.listen(3001, () => { });
+// app.listen(process.env.PORT, () => { });
+app.listen(3001, () => { });
 
 
 const mongo = new MongoClient("mongodb+srv://duongbinhnh:tungduonghj@cluster0.ubdfqnj.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true });
@@ -16,39 +16,9 @@ mongo.connect((err, db) => {
   if (err) throw err;
   const dbo = db.db("f8_dev");
 
-
-  app.get("/api/newfeed", (req, res) => {
-    dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray((err, obj) => {
-      if (err) throw err;
-      if (obj.length != 0) {
-        obj.map((item) => {
-          dbo.collection("users").find({ username: item.username }).toArray((err, obj) => {
-            if (err) throw err;
-            if (obj.length != 0) {
-              dbo.collection("videos").updateOne({ username: item.username }, {
-                $set: {
-                  live: obj[0].live,
-                  blue_check: obj[0].blue_check,
-                  name: obj[0].name,
-                  username: obj[0].username,
-                  count_followers: obj[0].count_followers,
-                  count_likes: obj[0].count_likes,
-                  bio: obj[0].bio,
-                  following: obj[0].following,
-                  avatar: obj[0].avatar
-                }
-              });
-            }
-          });
-        })
-        dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray((err, obj) => {
-          if (err) throw err;
-          if (obj.length != 0) {
-            res.json(obj);
-          }
-        })
-      }
-    });
+  app.get("/api/newfeed", async (req, res) => {
+    const render = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray();
+    res.json(render);
   });
 
   app.get("/api/discover", (req, res) => {
