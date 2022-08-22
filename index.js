@@ -97,7 +97,7 @@ mongo.connect((err, db) => {
       avatar: req.body.avatar
     })
     res.json({
-      "type": "video",
+      "type": "user",
       "status": "200 OK",
       "messenger": "Successful video upload!",
       "uid_code_json": uuidv4()
