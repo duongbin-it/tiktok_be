@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 // app.listen(process.env.PORT, () => { });
-app.listen(3001, () => { });
+app.listen(3002, () => { });
 
 
 const mongo = new MongoClient("mongodb+srv://duongbinhnh:tungduonghj@cluster0.ubdfqnj.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true });
@@ -17,42 +17,47 @@ mongo.connect((err, db) => {
   const dbo = db.db("f8_dev");
 
   app.get("/api/newfeed", async (req, res) => {
-    const render = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray();
-    res.json(render);
+    const as = [];
+    const a = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray()
+    for (var key in a) {
+      const currentItem = dbo.collection("users").find({ username: a[key].username }).toArray()
+      Promise.all([currentItem]).then(result => {
+        const arr1 = result[0][0]
+        const arr2 = a[key--]
+        as.push({ ...arr1, ...arr2 });
+        if (key < 0) res.json(as);
+      })
+    }
   });
 
-  app.get("/api/discover", (req, res) => {
-    dbo
+  app.get("/api/discover", async (req, res) => {
+    await dbo
       .collection("discover")
       .find()
       .toArray((err, obj) => {
         if (err) throw err;
-        if (obj.length != 0) {
-          res.json(obj);
-        }
+        if (obj.length != 0) res.json(obj);
       });
   });
 
-  app.get("/api/suggest_acounts", (req, res) => {
-    dbo
+  app.get("/api/suggest_acounts", async (req, res) => {
+    await dbo
       .collection("users")
       .aggregate([{ $sample: { size: 10 } }])
       .toArray((err, obj) => {
         if (err) throw err;
-        if (obj.length != 0) {
-          res.json(obj);
-        }
+        if (obj.length != 0) res.json(obj);
       });
   });
 
-  app.post("/api/post_videos", (req, res) => {
-    dbo
+  app.post("/api/post_videos", async (req, res) => {
+    await dbo
       .collection("users")
       .find(req.body.username && { username: req.body.username })
-      .toArray((err, obj) => {
+      .toArray(async (err, obj) => {
         if (err) throw err;
         if (obj.length != 0) {
-          dbo
+          await dbo
             .collection("videos")
             .insertOne({
               ...obj[0],
@@ -72,9 +77,9 @@ mongo.connect((err, db) => {
       })
   })
 
-  app.post("/api/post_users", (req, res) => {
-    dbo.collection("users").deleteOne({ username: req.body.username })
-    dbo.collection("users").insertOne({
+  app.post("/api/post_users", async (req, res) => {
+    await dbo.collection("users").deleteOne({ username: req.body.username })
+    await dbo.collection("users").insertOne({
       live: req.body.live,
       blue_check: req.body.blue_check,
       name: req.body.name,
@@ -88,8 +93,8 @@ mongo.connect((err, db) => {
     res.json('post success!');
   })
 
-  app.post("/api/users", (req, res) => {
-    dbo
+  app.post("/api/users", async (req, res) => {
+    await dbo
       .collection("users")
       .find(req.body.username && { username: req.body.username })
       .toArray((err, obj) => {
@@ -108,16 +113,15 @@ mongo.connect((err, db) => {
       })
   });
 
-  app.post("/api/following", (req, res) => {
-    console.log(req.body.username, req.body.value);
+  app.post("/api/following", async (req, res) => {
     newValue = { $set: { following: req.body.value } };
-    dbo.collection("users").updateOne({ username: req.body.username }, newValue);
-    dbo.collection("videos").updateOne({ username: req.body.username }, newValue);
+    await dbo.collection("users").updateOne({ username: req.body.username }, newValue);
+    await dbo.collection("videos").updateOne({ username: req.body.username }, newValue);
   });
 
-  app.post("/api/hearted", (req, res) => {
+  app.post("/api/hearted", async (req, res) => {
     newValue = { $set: { heart_check: req.body.value } };
-    dbo.collection("videos").updateOne({ username: req.body.username }, newValue);
+    await dbo.collection("videos").updateOne({ username: req.body.username }, newValue);
   });
 });
 
