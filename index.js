@@ -24,12 +24,14 @@ mongo.connect((err, db) => {
       const currentItem = dbo.collection("users").find({ username: a[i].username }).toArray()
       Promise.all([currentItem]).then(result => {
         const arr1 = result[0][0]
-        const arr2 = a[ac]
-        as.push({ ...arr1, ...arr2 });
-        if (ac === 0) {
-          res.json(as);
-        }
-        ac--
+        dbo.collection("videos").find({ username: arr1.username })
+          .toArray((err, obj) => {
+            as.push({ ...arr1, ...obj[0] });
+            if (ac === 0) {
+              res.json(as);
+            }
+            ac--
+          })
       })
     }
   });
