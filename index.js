@@ -7,8 +7,8 @@ const { v4: uuidv4 } = require('uuid');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.listen(process.env.PORT, () => { });
-// app.listen(3002, () => { });
+// app.listen(process.env.PORT, () => { });
+app.listen(3002, () => { });
 
 
 const mongo = new MongoClient("mongodb+srv://duongbinhnh:tungduonghj@cluster0.ubdfqnj.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true });
@@ -24,9 +24,12 @@ mongo.connect((err, db) => {
       const currentItem = dbo.collection("users").find({ username: a[i].username }).toArray()
       Promise.all([currentItem]).then(result => {
         const arr1 = result[0][0]
-        const arr2 = a[ac--]
+        const arr2 = a[ac]
         as.push({ ...arr1, ...arr2 });
-        if (ac < 0) res.json(as);
+        if (ac === 0) {
+          res.json(as);
+        }
+        ac--
       })
     }
   });
