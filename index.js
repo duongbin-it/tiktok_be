@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
-
+const { v4: uuidv4 } = require('uuid');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -19,13 +19,14 @@ mongo.connect((err, db) => {
   app.get("/api/newfeed", async (req, res) => {
     const as = [];
     const a = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray()
-    for (var key in a) {
-      const currentItem = dbo.collection("users").find({ username: a[key].username }).toArray()
+    let ac = 4
+    for (let i = ac; i >= 0; i--) {
+      const currentItem = dbo.collection("users").find({ username: a[i].username }).toArray()
       Promise.all([currentItem]).then(result => {
         const arr1 = result[0][0]
-        const arr2 = a[key--]
+        const arr2 = a[ac--]
         as.push({ ...arr1, ...arr2 });
-        if (key < 0) res.json(as);
+        if (ac < 0) res.json(as);
       })
     }
   });
@@ -51,30 +52,30 @@ mongo.connect((err, db) => {
   });
 
   app.post("/api/post_videos", async (req, res) => {
-    await dbo
-      .collection("users")
-      .find(req.body.username && { username: req.body.username })
-      .toArray(async (err, obj) => {
-        if (err) throw err;
-        if (obj.length != 0) {
-          await dbo
-            .collection("videos")
-            .insertOne({
-              ...obj[0],
-              title: req.body.title,
-              heart: req.body.heart,
-              share: req.body.share,
-              image: req.body.image,
-              comment: req.body.comment,
-              name_tag: req.body.name_tag,
-              link_music: req.body.link_music,
-              link_video: req.body.link_video,
-              name_music: req.body.name_music,
-              heart_check: req.body.heart_check,
-            })
-          res.json('post success!');
-        }
-      })
+    const obj = await dbo.collection("users").find(req.body.username && { username: req.body.username }).toArray()
+    if (obj.length != 0) {
+      dbo
+        .collection("videos")
+        .insertOne({
+          ...obj[0],
+          title: req.body.title,
+          heart: req.body.heart,
+          share: req.body.share,
+          image: req.body.image,
+          comment: req.body.comment,
+          name_tag: req.body.name_tag,
+          link_music: req.body.link_music,
+          link_video: req.body.link_video,
+          name_music: req.body.name_music,
+          heart_check: req.body.heart_check,
+        })
+      res.json({
+        "type": "video",
+        "status": "200 OK",
+        "messenger": "Successful video upload!",
+        "uid_code_json": uuidv4()
+      });
+    }
   })
 
   app.post("/api/post_users", async (req, res) => {
@@ -90,7 +91,12 @@ mongo.connect((err, db) => {
       following: req.body.following,
       avatar: req.body.avatar
     })
-    res.json('post success!');
+    res.json({
+      "type": "video",
+      "status": "200 OK",
+      "messenger": "Successful video upload!",
+      "uid_code_json": uuidv4()
+    });
   })
 
   app.post("/api/users", async (req, res) => {
