@@ -7,8 +7,8 @@ const { v4: uuidv4 } = require('uuid');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.listen(process.env.PORT, () => { });
-// app.listen(3002, () => { });
+// app.listen(process.env.PORT, () => { });
+app.listen(3002, () => { });
 
 
 const mongo = new MongoClient("mongodb+srv://duongbinhnh:tungduonghj@cluster0.ubdfqnj.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true });
@@ -18,23 +18,14 @@ mongo.connect((err, db) => {
 
   app.get("/api/newfeed", async (req, res) => {
     const as = [];
-    const a = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray()
-    let ac = 4
-    for (let i = ac; i >= 0; i--) {
-      const currentItem = dbo.collection("users").find({ username: a[i].username }).toArray()
-      Promise.all([currentItem]).then(result => {
-        const arr1 = result[0][0]
-        dbo.collection("videos").find({ username: arr1.username })
-          .toArray((err, obj) => {
-            as.push({ ...arr1, ...obj[0] });
-            if (ac === 0) {
-              res.json(as);
-            }
-            ac--
-          })
-      })
+    const Array = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray()
+    for (let i in Array) {
+      const currentItem = await dbo.collection("users").find({ username: Array[i].username }).toArray()
+      const currentvalue = await dbo.collection("videos").find({ username: currentItem[0].username }).toArray()
+      as.push({ ...currentItem[0], ...currentvalue[0] });
     }
-  });
+    res.json(as);
+  })
 
   app.get("/api/discover", async (req, res) => {
     await dbo
