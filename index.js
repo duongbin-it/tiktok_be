@@ -7,8 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.listen(process.env.PORT, () => { });
-// app.listen(3002, () => { });
+app.listen(process.env.PORT || 3001, () => { });
 
 
 const mongo = new MongoClient("mongodb+srv://duongbinhnh:tungduonghj@cluster0.ubdfqnj.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true });
@@ -19,12 +18,12 @@ mongo.connect((err, db) => {
   app.get("/api/newfeed", async (req, res) => {
     const as = [];
     const Array = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray()
-    for (let i in Array) {
-      const currentItem = await dbo.collection("users").find({ username: Array[i].username }).toArray()
-      const currentvalue = await dbo.collection("videos").find({ username: currentItem[0].username }).toArray()
-      as.push({ ...currentItem[0], ...currentvalue[0] });
+    for (index in Array) {
+      const infoUsers = await dbo.collection("users").find({ username: Array[index].username }).toArray()
+      const infoVideos = await dbo.collection("videos").find({ username: infoUsers[0].username }).toArray()
+      await as.push({ ...infoUsers[0], ...infoVideos[0] });
     }
-    res.json(as);
+    await res.json(as);
   })
 
   app.get("/api/discover", async (req, res) => {
