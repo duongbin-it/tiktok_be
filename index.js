@@ -47,12 +47,9 @@ mongo.connect((err, db) => {
   });
 
   app.post("/api/post_videos", async (req, res) => {
-    const obj = await dbo.collection("users").find(req.body.username && { username: req.body.username }).toArray()
-    if (obj.length != 0) {
       dbo
         .collection("videos")
         .insertOne({
-          ...obj[0],
           title: req.body.title,
           heart: req.body.heart,
           share: req.body.share,
@@ -70,7 +67,6 @@ mongo.connect((err, db) => {
         "messenger": "Successful video upload!",
         "uid_code_json": uuidv4()
       });
-    }
   })
 
   app.post("/api/post_users", async (req, res) => {
