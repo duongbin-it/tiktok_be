@@ -17,11 +17,19 @@ mongo.connect((err, db) => {
 
   app.get("/api/newfeed", async (req, res) => {
     const as = [];
+    const arr = []
     const Array = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray()
-    for (index in Array) {
-      const infoUsers = await dbo.collection("users").find({ username: Array[index].username }).toArray()
-      const infoVideos = await dbo.collection("videos").find({ username: infoUsers[0].username }).toArray()
-      await as.push({ ...infoUsers[0], ...infoVideos[0] });
+    for (const key in Array) {
+      if (arr.indexOf(Array[key].username) < 0) {
+        await arr.push(Array[key].username);
+      }
+    }
+    for (const key in arr) {
+      const infoUsers = await dbo.collection("users").find({ username: arr[key] }).toArray()
+      const infoVideos = await dbo.collection("videos").find({ username: arr[key] }).toArray()
+      for (const key in infoVideos) {
+        await as.push({ ...infoUsers[0], ...infoVideos[key] });
+      }
     }
     await res.json(as);
   })
@@ -47,6 +55,8 @@ mongo.connect((err, db) => {
   });
 
   app.post("/api/post_videos", async (req, res) => {
+    const obj = await dbo.collection("users").find(req.body.username && { username: req.body.username }).toArray()
+    if (obj.length != 0) {
       dbo
         .collection("videos")
         .insertOne({
@@ -55,6 +65,7 @@ mongo.connect((err, db) => {
           share: req.body.share,
           image: req.body.image,
           comment: req.body.comment,
+          username: req.body.username,
           name_tag: req.body.name_tag,
           link_music: req.body.link_music,
           link_video: req.body.link_video,
@@ -67,6 +78,7 @@ mongo.connect((err, db) => {
         "messenger": "Successful video upload!",
         "uid_code_json": uuidv4()
       });
+    }
   })
 
   app.post("/api/post_users", async (req, res) => {
