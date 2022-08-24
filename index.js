@@ -1,4 +1,5 @@
 const express = require("express");
+const shuffle = require('shuffle-array')
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
@@ -31,7 +32,7 @@ mongo.connect((err, db) => {
         await as.push({ ...infoUsers[0], ...infoVideos[key] });
       }
     }
-    await res.json(as);
+    await res.json(shuffle(as));
   })
 
   app.get("/api/discover", async (req, res) => {

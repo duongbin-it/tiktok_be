@@ -14,6 +14,7 @@
     "express": "^4.18.1",
     "mongodb": "^4.7.0",
     "nodemon": "^2.0.16",
+    "shuffle-array": "^1.0.1",
     "uuid": "^8.3.2"
   }
 }
