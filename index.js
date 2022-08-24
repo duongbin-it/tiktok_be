@@ -28,6 +28,7 @@ mongo.connect((err, db) => {
       }
       for (const key in arr) {
         const infoUsers = await dbo.collection("users").find({ username: arr[key] }).toArray()
+        infoUsers[0].name
         const infoVideos = await dbo.collection("videos").find({ username: arr[key] }).toArray()
         for (const key in infoVideos) {
           await as.push({ ...infoUsers[0], ...infoVideos[key] });
@@ -35,9 +36,9 @@ mongo.connect((err, db) => {
       }
       await res.json(shuffle(as));
     } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
-      throw new Error("STOP ACTION" + error);
+      console.error(error.message);
+      res.status(500).json(error.message);
+      throw new Error("STOP ACTION" + error.message);
     }
   })
 
@@ -51,9 +52,9 @@ mongo.connect((err, db) => {
           if (obj.length != 0) res.json(obj);
         });
     } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
-      throw new Error("STOP ACTION" + error);
+      console.error(error.message);
+      res.status(500).json(error.message);
+      throw new Error("STOP ACTION" + error.message);
     }
   });
 
@@ -67,9 +68,9 @@ mongo.connect((err, db) => {
           if (obj.length != 0) res.json(obj);
         });
     } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
-      throw new Error("STOP ACTION" + error);
+      console.error(error.message);
+      res.status(500).json(error.message);
+      throw new Error("STOP ACTION" + error.message);
     }
   });
 
@@ -88,16 +89,16 @@ mongo.connect((err, db) => {
         });
       }
     } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
-      throw new Error("STOP ACTION" + error);
+      console.error(error.message);
+      res.status(500).json(error.message);
+      throw new Error("STOP ACTION" + error.message);
     }
   })
 
   app.post("/api/post_users", async (req, res) => {
     try {
       const findUser = await dbo.collection("users").findOne({ username: req.body.username })
-      if (findUser._id) {
+      if (findUser.avatar) {
         await dbo.collection("users").findOneAndUpdate({ username: req.body.username }, { $set: BODY_USER(req) })
       }
       res.json({
@@ -108,9 +109,9 @@ mongo.connect((err, db) => {
       });
     } catch (error) {
       await dbo.collection("users").insertOne(BODY_USER(req))
-      console.error(error);
-      res.status(500).json(error);
-      throw new Error("STOP ACTION" + error);
+      console.error(error.message);
+      res.status(500).json(error.message);
+      throw new Error("STOP ACTION" + error.message);
     }
   })
 
@@ -134,9 +135,9 @@ mongo.connect((err, db) => {
           }
         })
     } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
-      throw new Error("STOP ACTION" + error);
+      console.error(error.message);
+      res.status(500).json(error.message);
+      throw new Error("STOP ACTION" + error.message);
     }
   });
 
@@ -146,9 +147,9 @@ mongo.connect((err, db) => {
       await dbo.collection("users").updateOne({ username: req.body.username }, newValue);
       await dbo.collection("videos").updateOne({ username: req.body.username }, newValue);
     } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
-      throw new Error("STOP ACTION" + error);
+      console.error(error.message);
+      res.status(500).json(error.message);
+      throw new Error("STOP ACTION" + error.message);
     }
   });
 
@@ -157,9 +158,9 @@ mongo.connect((err, db) => {
       newValue = { $set: { heart_check: req.body.value } };
       await dbo.collection("videos").updateOne({ username: req.body.username }, newValue);
     } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
-      throw new Error("STOP ACTION" + error);
+      console.error(error.message);
+      res.status(500).json(error.message);
+      throw new Error("STOP ACTION" + error.message);
     }
   });
 });
