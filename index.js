@@ -4,7 +4,7 @@ const app = express();
 const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
 const { v4: uuidv4 } = require('uuid');
-const { BODY_USER, BODY_VIDEO } = require('./variables');
+const { BODY_USER, BODY_VIDEO, SUCCESS_NOTI } = require('./variables');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -81,12 +81,7 @@ mongo.connect((err, db) => {
         dbo
           .collection("videos")
           .insertOne(BODY_VIDEO(req))
-        res.json({
-          "type": "video",
-          "status": "200 OK",
-          "messenger": "Successful video upload!",
-          "uid_code_json": uuidv4()
-        });
+        res.json(SUCCESS_NOTI(uuidv4));
       }
     } catch (error) {
       console.error(error.message);
@@ -97,16 +92,16 @@ mongo.connect((err, db) => {
 
   app.post("/api/post_users", async (req, res) => {
     try {
-      findUser.avatar
-      await dbo.collection("users").findOneAndUpdate({ username: req.body.username }, { $set: BODY_USER(req) })
-      res.json({
-        "type": "user",
-        "status": "200 OK",
-        "messenger": "Successful video upload!",
-        "uid_code_json": uuidv4()
-      });
+      const results = await dbo.collection("users").findOne({ username: req.body.username })
+      if (!results) {
+        await dbo.collection("users").insertOne(BODY_USER(req))
+        res.json(SUCCESS_NOTI(uuidv4));
+      }
+      else {
+        await dbo.collection("users").findOneAndUpdate({ username: req.body.username }, { $set: BODY_USER(req) })
+        res.json(SUCCESS_NOTI(uuidv4));
+      }
     } catch (error) {
-      await dbo.collection("users").insertOne(BODY_USER(req))
       console.error(error.message);
       res.status(500).json(error.message);
       throw new Error("STOP ACTION" + error.message);

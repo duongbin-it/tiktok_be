@@ -28,4 +28,13 @@ const BODY_VIDEO = (req) => {
     }
 }
 
-module.exports = { BODY_USER, BODY_VIDEO }
+const SUCCESS_NOTI = (uuid) => {
+    return {
+        type: "user",
+        status: "200 OK",
+        messenger: "Successful video upload!",
+        uid_code_json: uuid()
+    }
+}
+
+module.exports = { BODY_USER, BODY_VIDEO, SUCCESS_NOTI }
