@@ -4,6 +4,7 @@ const app = express();
 const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
 const { v4: uuidv4 } = require('uuid');
+const { BODY_USER, BODY_VIDEO } = require('./variables');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -60,19 +61,7 @@ mongo.connect((err, db) => {
     if (obj.length != 0) {
       dbo
         .collection("videos")
-        .insertOne({
-          title: req.body.title,
-          heart: req.body.heart,
-          share: req.body.share,
-          image: req.body.image,
-          comment: req.body.comment,
-          username: req.body.username,
-          name_tag: req.body.name_tag,
-          link_music: req.body.link_music,
-          link_video: req.body.link_video,
-          name_music: req.body.name_music,
-          heart_check: req.body.heart_check,
-        })
+        .insertOne(BODY_VIDEO(req))
       res.json({
         "type": "video",
         "status": "200 OK",
@@ -83,18 +72,15 @@ mongo.connect((err, db) => {
   })
 
   app.post("/api/post_users", async (req, res) => {
-    await dbo.collection("users").deleteOne({ username: req.body.username })
-    await dbo.collection("users").insertOne({
-      live: req.body.live,
-      blue_check: req.body.blue_check,
-      name: req.body.name,
-      username: req.body.username,
-      count_followers: req.body.count_followers,
-      count_likes: req.body.count_likes,
-      bio: req.body.bio,
-      following: req.body.following,
-      avatar: req.body.avatar
-    })
+    const findUser = await dbo.collection("users").findOne({ username: req.body.username })
+    try {
+      if (findUser._id) {
+        await dbo.collection("users").findOneAndUpdate({ username: req.body.username }, { $set: BODY_USER(req) })
+      }
+    } catch (error) {
+      await dbo.collection("users").insertOne(BODY_USER(req))
+    }
+
     res.json({
       "type": "user",
       "status": "200 OK",
