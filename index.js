@@ -97,10 +97,8 @@ mongo.connect((err, db) => {
 
   app.post("/api/post_users", async (req, res) => {
     try {
-      const findUser = await dbo.collection("users").findOne({ username: req.body.username })
-      if (findUser.avatar) {
-        await dbo.collection("users").findOneAndUpdate({ username: req.body.username }, { $set: BODY_USER(req) })
-      }
+      findUser.avatar
+      await dbo.collection("users").findOneAndUpdate({ username: req.body.username }, { $set: BODY_USER(req) })
       res.json({
         "type": "user",
         "status": "200 OK",
