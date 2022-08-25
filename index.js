@@ -71,6 +71,20 @@ mongo.connect((err, db) => {
     }
   });
 
+  app.get("/api/following_acounts", async (req, res) => {
+    try {
+      const result = await dbo.collection("users").aggregate([{ $sample: { size: 10 } }]).toArray()
+      const filter = result.filter((item) => {
+        return item.following === true
+      })
+      if (err) throw err;
+      if (result.length != 0) res.json(filter);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json(error.message);
+    }
+  });
+
   app.post("/api/post_videos", async (req, res) => {
     try {
       const obj = await dbo.collection("users").find(req.body.username && { username: req.body.username }).toArray()
