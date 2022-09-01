@@ -1,6 +1,6 @@
+require('dotenv').config()
 const MongoClient = require("mongodb").MongoClient
 const router = require('express').Router()
-const env = require('dotenv').config()
 const routesController = require('../controllers/controllers')
 
 const mongo = new MongoClient(process.env.MONGODB_URL, { useNewUrlParser: true })
