@@ -83,10 +83,9 @@ const routesController = {
     followingAccounts: async (req, res) => {
         try {
             const result = await dbo.collection("users").aggregate([{ $sample: { size: 10 } }]).toArray()
-            const filter = result.filter((item) => {
+            const filter = await result.filter((item) => {
                 return item.following === true
             })
-            if (err) throw err
             if (result.length != 0) res.json(filter)
         } catch (error) {
             console.error(error.message)
