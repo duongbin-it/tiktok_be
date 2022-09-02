@@ -1,19 +1,22 @@
 const { BODY_USER, SUCCESS_NOTI, BODY_VIDEO } = require("../variables/variables")
 const shuffle = require('shuffle-array')
 const { v4: uuidv4 } = require('uuid')
+const bcrypt = require('bcrypt')
 
 const routesController = {
 
     //Add Users
     addUsers: async (req, res) => {
         try {
+            const salt = await bcrypt.genSalt(10)
+            const hashed = await bcrypt.hash(req.body.password, salt)
             const results = await dbo.collection("users").findOne({ username: req.body.username })
             if (!results) {
-                await dbo.collection("users").insertOne(BODY_USER(req))
+                await dbo.collection("users").insertOne(BODY_USER(req, hashed))
                 res.json(SUCCESS_NOTI(uuidv4))
             }
             else {
-                await dbo.collection("users").findOneAndUpdate({ username: req.body.username }, { $set: BODY_USER(req) })
+                await dbo.collection("users").findOneAndUpdate({ username: req.body.username }, { $set: BODY_USER(req, hashed) })
                 res.json(SUCCESS_NOTI(uuidv4))
             }
         } catch (error) {
@@ -68,7 +71,7 @@ const routesController = {
         try {
             await dbo
                 .collection("users")
-                .aggregate([{ $sample: { size: 10 } }])
+                .aggregate([{ $sample: { size: 5 } }])
                 .toArray((err, obj) => {
                     if (err) throw err
                     if (obj.length != 0) res.json(obj)

@@ -5,6 +5,7 @@ const routesController = require('../controllers/controllers')
 
 const mongo = new MongoClient(process.env.MONGODB_URL, { useNewUrlParser: true })
 mongo.connect(async (err, db) => {
+
     dbo = await db.db("f8_dev")
     router.get('/newfeed', routesController.newFeed)
     router.get('/discover', routesController.disCover)
