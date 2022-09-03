@@ -44,7 +44,8 @@ const routesController = {
                     await as.push({ ...infoUsers[0], ...infoVideos[key] })
                 }
             }
-            await res.json(shuffle(as))
+
+            as[0] ? await res.json(shuffle(as)) : res.json({ "status": "no data" })
         } catch (error) {
             console.error(error.message)
             res.status(500).json(error.message)
@@ -180,39 +181,5 @@ const routesController = {
         }
     }
 }
-
-module.exports = routesController
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = routesController
