@@ -17,6 +17,7 @@ mongo.connect(async (err, db) => {
     router.post('/following', routesController.Following)
     router.post('/post_videos', routesController.postVideos)
     router.post('/hearted', routesController.Hearted)
+    router.post('/delete_videos', routesController.deleteVideos)
 })
 
 
