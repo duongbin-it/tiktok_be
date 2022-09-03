@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('moment')
 
 const BODY_USER = (req, hashed) => {
 
@@ -28,6 +28,7 @@ const BODY_VIDEO = (req) => {
         "heart": req.body.heart,
         "share": req.body.share,
         "comment": req.body.comment,
+        "asset_id": req.body.asset_id,
         "username": req.body.username,
         "name_tag": req.body.name_tag,
         "link_music": req.body.link_music,
