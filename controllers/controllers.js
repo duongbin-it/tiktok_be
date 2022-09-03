@@ -115,9 +115,9 @@ const routesController = {
     //delete videos
     deleteVideos: async (req, res) => {
         try {
-            const obj = await dbo.collection("videos").find({ _id: `ObjectId(${req.body._id})` }).toArray()
+            const obj = await dbo.collection("videos").find({ _id: ObjectId(`${req.body._id}`) }).toArray()
             if (obj.length != 0) {
-                await dbo.collection("videos").deleteOne({ _id: `ObjectId(${req.body._id})` })
+                await dbo.collection("videos").deleteOne({ _id: ObjectId(`${req.body._id}`) })
                 res.status(200).json({
                     status: "success",
                     code_status: "200 OK"
