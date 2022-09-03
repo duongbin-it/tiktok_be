@@ -24,6 +24,7 @@ const BODY_USER = (req, hashed) => {
 const BODY_VIDEO = (req) => {
 
     return {
+        "height": req.body.height,
         "title": req.body.title,
         "heart": req.body.heart,
         "share": req.body.share,
