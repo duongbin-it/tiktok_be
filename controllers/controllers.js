@@ -2,6 +2,7 @@ const { BODY_USER, SUCCESS_NOTI, BODY_VIDEO } = require("../variables/variables"
 const shuffle = require('shuffle-array')
 const { v4: uuidv4 } = require('uuid')
 const bcrypt = require('bcrypt')
+const { default: axios } = require("axios")
 var ObjectId = require('mongodb').ObjectId
 
 const routesController = {
@@ -120,7 +121,7 @@ const routesController = {
             const obj = await dbo.collection("videos").find({ _id: ObjectId(`${req.body._id}`) }).toArray()
             if (obj.length != 0) {
                 await dbo.collection("videos").deleteOne({ _id: ObjectId(`${req.body._id}`) })
-                await axio.post("https://cloudinary.com/console/api/v1/operations/delete", {
+                await axios.post("https://cloudinary.com/console/api/v1/operations/delete", {
                     "external_ids": [`${req.body.asset_id}`]
                 }, {
                     headers: {
