@@ -120,6 +120,13 @@ const routesController = {
             const obj = await dbo.collection("videos").find({ _id: ObjectId(`${req.body._id}`) }).toArray()
             if (obj.length != 0) {
                 await dbo.collection("videos").deleteOne({ _id: ObjectId(`${req.body._id}`) })
+                await axio.post("https://cloudinary.com/console/api/v1/operations/delete", {
+                    "external_ids": [`${req.body.asset_id}`]
+                }, {
+                    headers: {
+                        Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NjI0NzQ4MzgsImlzcyI6ImNvbnNvbGUiLCJpYXQiOjE2NjIzMDIwMzgsInVzZXJfaWQiOiJlMGNlMGVkMjhkMmFhMzljOWQ0NjQyODRmZTUzMTkzOSIsIm1ldGEiOnsiY2xkX2FkbWluIjpmYWxzZSwicm9sZSI6Im1hc3Rlcl9hZG1pbiIsImNsb3VkX25hbWUiOiJkbWI3b3g5dmgifSwiY3VzdG9tZXJfaWQiOiJiZjM5OGZiZWY2OWE3MmEwMzU1OGFkZjcxMTBlY2UzYyJ9.VR5B-ng4uyzSOIavSImjZJizXeiI0gLVO981yCoh__s"
+                    }
+                })
                 res.status(200).json({
                     status: "success",
                     code_status: "200 OK"
