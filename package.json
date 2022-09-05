@@ -7,7 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
-  "author": "",
+   "keywords": [
+    "example",
+    "heroku"
+  ],
+  "author": "jane-doe",
+  "license": "MIT",
+  "engines": {
+    "node": "14.x"
+  }
   "license": "ISC",
   "dependencies": {
     "axios": "^0.27.2",
