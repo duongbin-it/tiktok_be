@@ -104,9 +104,7 @@ const routesController = {
         try {
             const obj = await dbo.collection("users").find(req.body.username && { username: req.body.username }).toArray()
             if (obj.length != 0) {
-                await dbo
-                    .collection("videos")
-                    .insertOne(BODY_VIDEO(req))
+                await dbo.collection("videos").insertOne(BODY_VIDEO(req))
                 res.json(SUCCESS_NOTI(uuidv4))
             }
         } catch (error) {
