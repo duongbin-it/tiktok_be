@@ -2,17 +2,13 @@ const { BODY_USER, SUCCESS_NOTI, BODY_VIDEO } = require("../variables/variables"
 const shuffle = require('shuffle-array')
 const { v4: uuidv4 } = require('uuid')
 const bcrypt = require('bcrypt')
-const { default: axios } = require("axios")
-var ObjectId = require('mongodb').ObjectId
+const { axios } = require("axios")
 
 const routesController = {
 
     //Add Users
     addUsers: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             const salt = await bcrypt.genSalt(10)
             const hashed = await bcrypt.hash(req.body.password, salt)
             const results = await dbo.collection("users").findOne({ username: req.body.username })
@@ -33,9 +29,6 @@ const routesController = {
     //Newfeed
     newFeed: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             const as = [], arr = []
             const Array = await dbo.collection("videos").aggregate([{ $sample: { size: 10 } }]).toArray()
             for (const key in Array) {
@@ -62,9 +55,6 @@ const routesController = {
     //list discover
     disCover: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             await dbo
                 .collection("discover")
                 .find()
@@ -81,9 +71,6 @@ const routesController = {
     //list suggest accounts
     suggestAccounts: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             await dbo
                 .collection("users")
                 .aggregate([{ $sample: { size: 5 } }])
@@ -100,9 +87,6 @@ const routesController = {
     //list following accounts
     followingAccounts: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             const result = await dbo.collection("users").aggregate([{ $sample: { size: 10 } }]).toArray()
             const filter = await result.filter((item) => {
                 return item.following === true
@@ -117,9 +101,6 @@ const routesController = {
     //api post videos
     postVideos: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             const obj = await dbo.collection("users").find(req.body.username && { username: req.body.username }).toArray()
             if (obj.length != 0) {
                 await dbo.collection("videos").insertOne(BODY_VIDEO(req))
@@ -134,9 +115,6 @@ const routesController = {
     //delete videos
     deleteVideos: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             const obj = await dbo.collection("videos").find({ _id: ObjectId(`${req.body._id}`) }).toArray()
             if (obj.length != 0) {
                 await dbo.collection("videos").deleteOne({ _id: ObjectId(`${req.body._id}`) })
@@ -144,7 +122,7 @@ const routesController = {
                     "external_ids": [`${req.body.asset_id}`]
                 }, {
                     headers: {
-                        Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NjI0NzQ4MzgsImlzcyI6ImNvbnNvbGUiLCJpYXQiOjE2NjIzMDIwMzgsInVzZXJfaWQiOiJlMGNlMGVkMjhkMmFhMzljOWQ0NjQyODRmZTUzMTkzOSIsIm1ldGEiOnsiY2xkX2FkbWluIjpmYWxzZSwicm9sZSI6Im1hc3Rlcl9hZG1pbiIsImNsb3VkX25hbWUiOiJkbWI3b3g5dmgifSwiY3VzdG9tZXJfaWQiOiJiZjM5OGZiZWY2OWE3MmEwMzU1OGFkZjcxMTBlY2UzYyJ9.VR5B-ng4uyzSOIavSImjZJizXeiI0gLVO981yCoh__s"
+                        Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NjI2NTM5NzEsImlzcyI6ImNvbnNvbGUiLCJpYXQiOjE2NjI0ODExNzEsInVzZXJfaWQiOiJlMGNlMGVkMjhkMmFhMzljOWQ0NjQyODRmZTUzMTkzOSIsIm1ldGEiOnsiY2xkX2FkbWluIjpmYWxzZSwicm9sZSI6Im1hc3Rlcl9hZG1pbiIsImNsb3VkX25hbWUiOiJkbWI3b3g5dmgifSwiY3VzdG9tZXJfaWQiOiJiZjM5OGZiZWY2OWE3MmEwMzU1OGFkZjcxMTBlY2UzYyJ9.V2Nk2Uwg49pqtqIWbj0W3YfNSgbxOnYmBOJYxqI-Dwk"
                     }
                 })
                 res.status(200).json({
@@ -161,9 +139,6 @@ const routesController = {
     //detail accounts (followings, followers, likecount, bio...)
     detailAccounts: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             await dbo
                 .collection("users")
                 .find(req.body.username && { username: req.body.username })
@@ -191,9 +166,6 @@ const routesController = {
     //handle event following
     Following: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             newValue = { $set: { following: req.body.value } }
             await dbo.collection("users").updateOne({ username: req.body.username }, newValue)
             await dbo.collection("videos").updateOne({ username: req.body.username }, newValue)
@@ -206,9 +178,6 @@ const routesController = {
     //handle event hearted
     Hearted: async (req, res) => {
         try {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-            res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept")
             newValue = { $set: { heart_check: req.body.value } }
             await dbo.collection("videos").updateOne({ username: req.body.username }, newValue)
         } catch (error) {

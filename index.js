@@ -9,7 +9,4 @@ app.use(cors())
 app.listen(process.env.PORT || 3001, () => { })
 
 
-
-
 app.use('/api', router)
-
